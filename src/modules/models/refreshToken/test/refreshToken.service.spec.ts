@@ -4,7 +4,10 @@ import { JwtPayload, ValidatedUser } from '../../../auth/auth.types';
 import { EncryptionAndHashService } from '../../../encryptionAndHash/encrypttionAndHash.service';
 import { RefreshTokenService } from '../refreshToken.service';
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
-import { RefreshTokenPayload1, RevokeTokenPayload } from '../refreshToken.types';
+import {
+  RefreshTokenPayload1,
+  RevokeTokenPayload,
+} from '../refreshToken.types';
 import { mockRepository } from '../../../database/test/database.service.mock';
 import { JWT_TOKEN, REFRESH_JWT_TOKEN } from '../../../../common/constants';
 import {

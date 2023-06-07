@@ -1,6 +1,9 @@
 import { DateTime } from 'luxon';
 import { RefreshTokenDto, RevokeRefreshTokenDto } from '../refreshToken.dto';
-import { RefreshTokenPayload1, RevokeTokenPayload } from '../refreshToken.types';
+import {
+  RefreshTokenPayload1,
+  RevokeTokenPayload,
+} from '../refreshToken.types';
 import { JwtPayload, ValidatedUser } from '../../../auth/auth.types';
 import { Role } from '../../../../common/decorators/roles';
 import { v4 as uuid } from 'uuid';

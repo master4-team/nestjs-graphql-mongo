@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RefreshTokenController } from '../refreshToken.controller';
 import { RefreshTokenDto, RevokeRefreshTokenDto } from '../refreshToken.dto';
 import { RefreshTokenService } from '../refreshToken.service';
-import { RefreshTokenPayload1, RevokeTokenPayload } from '../refreshToken.types';
+import {
+  RefreshTokenPayload1,
+  RevokeTokenPayload,
+} from '../refreshToken.types';
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import {
   mockRefreshTokenDto,
