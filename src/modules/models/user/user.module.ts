@@ -5,6 +5,7 @@ import { FilterModule } from '../../filter/filter.module';
 import { UserController } from './user.controller';
 import { UserModel, UserSchema } from './user.model';
 import { UserService } from './user.service';
+import { UserResolver } from './user.resolver';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { UserService } from './user.service';
     EncryptionAndHashModule,
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, UserResolver],
   exports: [UserService],
 })
 export class UserModule {}

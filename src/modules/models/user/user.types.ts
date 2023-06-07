@@ -1,4 +1,8 @@
+import { ObjectType } from '@nestjs/graphql';
 import { DeepHideOrOmit } from '../../../common/types';
-import { User } from './user.model';
+import { User, UserModel } from './user.model';
 
-export type UserPayload = DeepHideOrOmit<User, 'password', true>;
+export type UserPayload1 = DeepHideOrOmit<User, 'password', true>;
+
+@ObjectType()
+export class UserPayload extends UserModel {}

@@ -7,6 +7,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { SKIP_JWT_GUARD_KEY } from '../../../common/decorators/skipJwtGuard';
 import { ErrorMessageEnum } from '../../../common/types';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -21,7 +22,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     );
     if (isSkipJwtGuard) return true;
 
-    const request = context.switchToHttp().getRequest();
+    const request = GqlExecutionContext.create(context).getContext();
     const accessToken = request.headers.authorization?.split(' ')[1];
     if (!accessToken) {
       throw new UnauthorizedException(ErrorMessageEnum.accessTokenIsMissing);

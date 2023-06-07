@@ -13,7 +13,7 @@ import { ErrorMessageEnum } from '../../../../common/types';
 import { BusinessException } from '../../../../common/exceptions';
 import { EncryptionAndHashService } from '../../../encryptionAndHash/encrypttionAndHash.service';
 import { User, UserModel } from '../user.model';
-import { UserPayload } from '../user.types';
+import { UserPayload1 } from '../user.types';
 import { mockRepository } from '../../../database/test/database.service.mock';
 import { getModelToken } from '@nestjs/mongoose';
 
@@ -24,7 +24,7 @@ describe('UserService', () => {
   let encryptionAndHashService: EncryptionAndHashService;
 
   let user: User;
-  let userPayload: UserPayload;
+  let userPayload: UserPayload1;
   let changePasswordDto: ChangePasswordDto;
   let newHashPassword: string;
   let updateUserDto: UpdateUserDto;

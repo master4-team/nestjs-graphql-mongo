@@ -1,17 +1,35 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import helmet from 'helmet';
+import helmet, { HelmetOptions } from 'helmet';
 import { AppModule } from './app.module';
 import { LoggerService } from './modules/logger/logger.service';
+import { EnvironmentEnum } from './common/types';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const port = app.get(ConfigService).get<number>('port');
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('port');
+  const env = configService.get<string>('env');
   const logger = app.get(LoggerService);
 
-  app.use(helmet());
+  const helmetOptions: HelmetOptions = {
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net'],
+        scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+        manifestSrc: [
+          `'self'`,
+          'apollo-server-landing-page.cdn.apollographql.com',
+        ],
+        frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
+      },
+    },
+  };
+
+  app.use(helmet(env === EnvironmentEnum.DEV ? helmetOptions : undefined));
 
   app.setGlobalPrefix('api');
 
@@ -25,7 +43,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app
-    .listen(4000)
+    .listen(port)
     .then(() => logger.log(`NestedJS server is listening on port ${port}`))
     .catch(console.error);
 }

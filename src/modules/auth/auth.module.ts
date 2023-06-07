@@ -11,6 +11,7 @@ import { JwtAuthGuard } from './guards/jwt';
 import { LocalAuthGuard } from './guards/local';
 import { RoleGuard } from './guards/role';
 import { RefreshTokenModule } from '../models/refreshToken/refreshToken.module';
+import { AuthResolver } from './auth.resolver';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RefreshTokenModule } from '../models/refreshToken/refreshToken.module';
     JwtAuthGuard,
     LocalAuthGuard,
     RoleGuard,
+    AuthResolver,
   ],
   exports: [AuthService],
 })

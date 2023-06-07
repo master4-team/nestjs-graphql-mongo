@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '../auth.controller';
 import { RegisterDto } from '../auth.dto';
 import { AuthService } from '../auth.service';
-import { ValidatedUser, LoginPayload, RegisterPayload } from '../auth.types';
+import { ValidatedUser, LoginPayload1, RegisterPayload1 } from '../auth.types';
 import {
   mockLoginPayload,
   mockRegisterDto,
@@ -19,8 +19,8 @@ describe('AuthController', () => {
 
   let validatedUer: ValidatedUser;
   let registerDto: RegisterDto;
-  let loginPayload: LoginPayload;
-  let registerPayload: RegisterPayload;
+  let loginPayload: LoginPayload1;
+  let registerPayload: RegisterPayload1;
 
   beforeEach(async () => {
     validatedUer = { ...mockValidatedUser };

@@ -7,7 +7,7 @@ import { EncryptionAndHashService } from '../../encryptionAndHash/encrypttionAnd
 import { ChangePasswordDto, UpdateUserDto } from './user.dto';
 import { User, UserDocument, UserModel } from './user.model';
 import { ErrorMessageEnum } from '../../../common/types';
-import { UserPayload } from './user.types';
+import { UserPayload1 } from './user.types';
 import hideOrOmitDeep from '../../../utils/hideOrOmitFields';
 
 @Injectable()
@@ -20,26 +20,26 @@ export class UserService extends BaseService<UserDocument, User> {
     super(userModel);
   }
 
-  async findUserById(id: string): Promise<UserPayload> {
+  async findUserById(id: string): Promise<UserPayload1> {
     const user = await this.findById(id);
     if (!user) {
       return null;
     }
-    return hideOrOmitDeep(user, ['password'], true) as UserPayload;
+    return hideOrOmitDeep(user, ['password'], true) as UserPayload1;
   }
 
   async updateUserById(
     id: string,
     updateDto: UpdateUserDto,
-  ): Promise<UserPayload> {
+  ): Promise<UserPayload1> {
     const updated = await this.updateById(id, updateDto);
-    return hideOrOmitDeep(updated, ['password'], true) as UserPayload;
+    return hideOrOmitDeep(updated, ['password'], true) as UserPayload1;
   }
 
   async changePassword(
     userId: string,
     changePasswordDto: ChangePasswordDto,
-  ): Promise<UserPayload> {
+  ): Promise<UserPayload1> {
     const user = await this.findById(userId);
 
     if (!user) {
@@ -78,6 +78,6 @@ export class UserService extends BaseService<UserDocument, User> {
       password: newPasswordHash,
     });
 
-    return hideOrOmitDeep(updated, ['password'], true) as UserPayload;
+    return hideOrOmitDeep(updated, ['password'], true) as UserPayload1;
   }
 }

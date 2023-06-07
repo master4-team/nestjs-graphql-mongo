@@ -3,7 +3,7 @@ import { SkipJwtGuard } from '../../../common/decorators/skipJwtGuard';
 import { Role, Roles } from '../../../common/decorators/roles';
 import { RefreshTokenDto, RevokeRefreshTokenDto } from './refreshToken.dto';
 import { RefreshTokenService } from './refreshToken.service';
-import { RefreshTokenPayload, RevokeTokenPayload } from './refreshToken.types';
+import { RefreshTokenPayload1, RevokeTokenPayload } from './refreshToken.types';
 
 @Controller('refresh-token')
 export class RefreshTokenController {
@@ -14,7 +14,7 @@ export class RefreshTokenController {
   async refreshToken(
     @Body() body: RefreshTokenDto,
     @Headers('authorization') authorization: string,
-  ): Promise<RefreshTokenPayload> {
+  ): Promise<RefreshTokenPayload1> {
     return await this.refreshTokenService.refresh(
       authorization.split(' ')[1],
       body.refreshToken,

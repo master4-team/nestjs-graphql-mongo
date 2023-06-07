@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 import { RefreshTokenDto, RevokeRefreshTokenDto } from '../refreshToken.dto';
-import { RefreshTokenPayload, RevokeTokenPayload } from '../refreshToken.types';
+import { RefreshTokenPayload1, RevokeTokenPayload } from '../refreshToken.types';
 import { JwtPayload, ValidatedUser } from '../../../auth/auth.types';
 import { Role } from '../../../../common/decorators/roles';
 import { v4 as uuid } from 'uuid';
@@ -18,7 +18,7 @@ const mockRevokeTokenDto: RevokeRefreshTokenDto = {
   userId,
 };
 
-const mockRefreshTokenPayload: RefreshTokenPayload = {
+const mockRefreshTokenPayload: RefreshTokenPayload1 = {
   _id,
   userId,
   iv: 'iv',

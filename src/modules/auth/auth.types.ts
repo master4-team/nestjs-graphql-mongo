@@ -1,7 +1,11 @@
+import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
 import { Role } from '../../common/decorators/roles';
 import { DeepHideOrOmit } from '../../common/types';
-import { RefreshTokenPayload } from '../models/refreshToken/refreshToken.types';
-import { User } from '../models/user/user.model';
+import {
+  RefreshTokenPayload,
+  RefreshTokenPayload1,
+} from '../models/refreshToken/refreshToken.types';
+import { User, UserModel } from '../models/user/user.model';
 
 export type JwtPayload = {
   username: string;
@@ -17,6 +21,18 @@ export type ValidatedUser = {
   role: Role;
 };
 
-export type LoginPayload = RefreshTokenPayload;
+export type LoginPayload1 = RefreshTokenPayload1;
 
-export type RegisterPayload = DeepHideOrOmit<User, 'password', true>;
+export type RegisterPayload1 = DeepHideOrOmit<User, 'password', true>;
+
+@ArgsType()
+export class RegisterArgs extends UserModel {
+  @Field()
+  password: string;
+}
+
+@ObjectType()
+export class LoginPayload extends RefreshTokenPayload {}
+
+@ObjectType()
+export class RegisterPayload extends UserModel {}

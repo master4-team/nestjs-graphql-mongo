@@ -10,7 +10,7 @@ import {
   mockUserPayload,
   mockValidatedUser,
 } from './user.mock';
-import { UserPayload } from '../user.types';
+import { UserPayload1 } from '../user.types';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -18,7 +18,7 @@ describe('UserController', () => {
   let userController: UserController;
   let userService: UserService;
 
-  let userPayload: UserPayload;
+  let userPayload: UserPayload1;
   let changePasswordDto: ChangePasswordDto;
   let updateUserDto: UpdateUserDto;
   let validatedUser: ValidatedUser;

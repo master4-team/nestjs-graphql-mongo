@@ -4,7 +4,7 @@ import { Role, Roles } from '../../../common/decorators/roles';
 import { ValidatedUser } from '../../auth/auth.types';
 import { ChangePasswordDto, UpdateUserDto } from './user.dto';
 import { UserService } from './user.service';
-import { UserPayload } from './user.types';
+import { UserPayload1 } from './user.types';
 
 @Controller('user')
 export class UserController {
@@ -13,7 +13,7 @@ export class UserController {
   @Get('me')
   async getProfile(
     @AuthorizedUser() user: ValidatedUser,
-  ): Promise<UserPayload> {
+  ): Promise<UserPayload1> {
     return await this.userService.findUserById(user.userId);
   }
 
@@ -22,7 +22,7 @@ export class UserController {
   async updateById(
     @AuthorizedUser() user: ValidatedUser,
     @Body() updateDto: UpdateUserDto,
-  ): Promise<UserPayload> {
+  ): Promise<UserPayload1> {
     return await this.userService.updateUserById(user.userId, updateDto);
   }
 
@@ -31,7 +31,7 @@ export class UserController {
   async changePassword(
     @AuthorizedUser() user: ValidatedUser,
     @Body() body: ChangePasswordDto,
-  ): Promise<UserPayload> {
+  ): Promise<UserPayload1> {
     return await this.userService.changePassword(user.userId, body);
   }
 }

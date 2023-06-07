@@ -14,7 +14,7 @@ import {
   TechnicalException,
 } from '../../../common/exceptions';
 import { DateTime } from 'luxon';
-import { RefreshTokenPayload, RevokeTokenPayload } from './refreshToken.types';
+import { RefreshTokenPayload1, RevokeTokenPayload } from './refreshToken.types';
 import { EncryptionAndHashService } from '../../encryptionAndHash/encrypttionAndHash.service';
 import { ErrorMessageEnum } from '../../../common/types';
 import { LoggerService } from '../../logger/logger.service';
@@ -48,7 +48,7 @@ export class RefreshTokenService extends BaseService<
   async refresh(
     accessToken: string,
     refreshToken: string,
-  ): Promise<RefreshTokenPayload> {
+  ): Promise<RefreshTokenPayload1> {
     const jwtPayload = await this.verify(accessToken, 'access', {
       ignoreExpiration: true,
     });
@@ -115,7 +115,7 @@ export class RefreshTokenService extends BaseService<
 
   async createToken(
     validatedUser: ValidatedUser,
-  ): Promise<RefreshTokenPayload> {
+  ): Promise<RefreshTokenPayload1> {
     const payload: JwtPayload = {
       username: validatedUser.username,
       role: validatedUser.role,

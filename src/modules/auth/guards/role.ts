@@ -7,6 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Role, ROLES_KEY } from '../../../common/decorators/roles';
 import { ValidatedUser } from '../auth.types';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -20,7 +21,8 @@ export class RoleGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
-    const user: ValidatedUser = context.switchToHttp().getRequest().user;
+    const user: ValidatedUser =
+      GqlExecutionContext.create(context).getContext()?.user;
 
     if (user?.role === Role.ROOT) {
       return true;

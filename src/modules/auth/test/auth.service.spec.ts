@@ -1,6 +1,6 @@
 import { LoginDto, RegisterDto } from '../auth.dto';
 import { AuthService } from '../auth.service';
-import { ValidatedUser, LoginPayload, RegisterPayload } from '../auth.types';
+import { ValidatedUser, LoginPayload1, RegisterPayload1 } from '../auth.types';
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import {
   mockLoginDto,
@@ -32,9 +32,9 @@ describe('AuthService', () => {
   let registerDto: RegisterDto;
   let loginDto: LoginDto;
   let validatedUser: ValidatedUser;
-  let loginPayload: LoginPayload;
+  let loginPayload: LoginPayload1;
   let hashedPassword: string;
-  let registerPayload: RegisterPayload;
+  let registerPayload: RegisterPayload1;
 
   beforeEach(async () => {
     userRecord = { ...mockUserRecord };

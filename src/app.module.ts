@@ -29,6 +29,7 @@ import { HealthModule } from './modules/health/health.module';
 import { FilterQueryMiddleware } from './common/middlewares/filterQuery';
 import { CrudModule } from './modules/models/crud/crud.module';
 import { RefreshTokenModule } from './modules/models/refreshToken/refreshToken.module';
+import { GraphQLModule } from './modules/graphQL/graphQL.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { RefreshTokenModule } from './modules/models/refreshToken/refreshToken.m
     FilterModule,
     HealthModule,
     CrudModule,
+    GraphQLModule,
   ],
   providers: [
     {

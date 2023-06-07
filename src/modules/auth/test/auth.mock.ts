@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { Role } from '../../../common/decorators/roles';
 import { LoginDto, RegisterDto } from '../auth.dto';
-import { LoginPayload, RegisterPayload, ValidatedUser } from '../auth.types';
+import { LoginPayload1, RegisterPayload1, ValidatedUser } from '../auth.types';
 import hideOrOmitDeep from '../../../utils/hideOrOmitFields';
 import { v4 as uuid } from 'uuid';
 import { User } from '../../models/user/user.model';
@@ -27,7 +27,7 @@ const mockLoginDto: LoginDto = {
   password: 'password',
 };
 
-const mockLoginPayload: LoginPayload = {
+const mockLoginPayload: LoginPayload1 = {
   userId,
   iv: 'iv',
   refreshToken: 'refreshToken',
@@ -49,7 +49,7 @@ const mockRegisterPayload = hideOrOmitDeep(
   mockUserRecord,
   ['password'],
   true,
-) as RegisterPayload;
+) as RegisterPayload1;
 
 export {
   mockValidatedUser,

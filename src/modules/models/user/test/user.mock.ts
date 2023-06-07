@@ -2,7 +2,7 @@ import { Role } from '../../../../common/decorators/roles';
 import { ValidatedUser } from '../../../auth/auth.types';
 import { ChangePasswordDto, UpdateUserDto } from '../user.dto';
 import { User } from '../user.model';
-import { UserPayload } from '../user.types';
+import { UserPayload1 } from '../user.types';
 import { v4 as uuid } from 'uuid';
 
 const _id = uuid();
@@ -35,7 +35,7 @@ const mockUserPayload = {
   phone: '1234567890',
   username: 'username',
   role: Role.USER,
-} as UserPayload;
+} as UserPayload1;
 
 const mockUpdateUserDto: UpdateUserDto = {
   name: 'newName',

@@ -3,6 +3,7 @@ import mongoose, { SchemaTypes } from 'mongoose';
 import mongooseLeanDefaults from 'mongoose-lean-defaults';
 import { mongooseLeanGetters } from 'mongoose-lean-getters';
 import { mongooseLeanVirtuals } from 'mongoose-lean-virtuals';
+import { Property } from '../../common/decorators/property';
 
 export const getSchemaOptions = (schemaOptions: SchemaOptions = {}) => {
   const options: SchemaOptions = {
@@ -14,13 +15,15 @@ export const getSchemaOptions = (schemaOptions: SchemaOptions = {}) => {
 
 @Schema(getSchemaOptions())
 export class BaseModel {
-  @Prop({ required: false, type: SchemaTypes.ObjectId, auto: true })
+  @Property({
+    dbOptions: { required: false, type: SchemaTypes.ObjectId, auto: true },
+  })
   _id?: string;
 
-  @Prop({ required: false })
+  @Property({ dbOptions: { required: false } })
   createdAt?: Date;
 
-  @Prop({ required: false })
+  @Property({ dbOptions: { required: false } })
   updatedAt?: Date;
 }
 

@@ -2,7 +2,12 @@ import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Role } from '../../common/decorators/roles';
 import { BusinessException } from '../../common/exceptions';
 import { RegisterDto } from './auth.dto';
-import { LoginPayload, RegisterPayload, ValidatedUser } from './auth.types';
+import {
+  LoginPayload1,
+  RegisterArgs,
+  RegisterPayload1,
+  ValidatedUser,
+} from './auth.types';
 import hideOrOmitFields from '../../utils/hideOrOmitFields';
 import { ErrorMessageEnum } from '../../common/types';
 import { UserService } from '../models/user/user.service';
@@ -42,12 +47,12 @@ export class AuthService {
     };
   }
 
-  async login(validatedUser: ValidatedUser): Promise<LoginPayload> {
+  async login(validatedUser: ValidatedUser): Promise<LoginPayload1> {
     return await this.refreshTokenService.createToken(validatedUser);
   }
 
-  async register(registerDto: RegisterDto): Promise<RegisterPayload> {
-    const { username, email, password } = registerDto;
+  async register(registerArgs: RegisterArgs): Promise<RegisterPayload1> {
+    const { username, email, password } = registerArgs;
     let filter: FilterQuery<User> = { username };
     if (email) {
       filter = { $or: [{ username }, { email }] };
@@ -62,11 +67,11 @@ export class AuthService {
     const hashedPassword = await this.encryptionAndHashService.hash(password);
 
     const result = await this.usersService.create({
-      ...registerDto,
+      ...registerArgs,
       password: hashedPassword,
       role: Role.USER,
     });
 
-    return hideOrOmitFields(result, ['password'], true) as RegisterPayload;
+    return hideOrOmitFields(result, ['password'], true) as RegisterPayload1;
   }
 }
