@@ -6,13 +6,14 @@ import { createRelation } from '../../database/plugins/relation';
 import { HydratedDocument } from 'mongoose';
 import { LeanModel } from '../../../common/types';
 import { Property } from '../../../common/decorators/property';
-import { ObjectType } from '@nestjs/graphql';
+import { InputType, ObjectType } from '@nestjs/graphql';
 
 export type RefreshTokenDocument = HydratedDocument<RefreshTokenModel>;
 export type RefreshToken = LeanModel<RefreshTokenDocument>;
 
 @Schema(getSchemaOptions({ collection: 'refreshToken' }))
 @ObjectType()
+@InputType('RefreshTokenInput')
 export class RefreshTokenModel extends BaseModel {
   @Property()
   refreshToken: string;

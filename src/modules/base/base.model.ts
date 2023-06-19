@@ -1,9 +1,10 @@
-import { Schema, SchemaFactory, SchemaOptions, Prop } from '@nestjs/mongoose';
+import { Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
 import mongoose, { SchemaTypes } from 'mongoose';
 import mongooseLeanDefaults from 'mongoose-lean-defaults';
 import { mongooseLeanGetters } from 'mongoose-lean-getters';
 import { mongooseLeanVirtuals } from 'mongoose-lean-virtuals';
 import { Property } from '../../common/decorators/property';
+import { ObjectType } from '@nestjs/graphql';
 
 export const getSchemaOptions = (schemaOptions: SchemaOptions = {}) => {
   const options: SchemaOptions = {
@@ -14,6 +15,7 @@ export const getSchemaOptions = (schemaOptions: SchemaOptions = {}) => {
 };
 
 @Schema(getSchemaOptions())
+@ObjectType()
 export class BaseModel {
   @Property({
     dbOptions: { required: false, type: SchemaTypes.ObjectId, auto: true },
