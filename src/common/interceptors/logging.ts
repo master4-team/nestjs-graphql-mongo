@@ -11,13 +11,15 @@ import getRequestInfo from '../../utils/requestInfo';
 import { API_CONTEXT, PARSED_FILTER } from '../constants';
 import { ResponseBody } from '../types';
 import hideOrOmitDeep from '../../utils/hideOrOmitFields';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   constructor(private readonly logger: LoggerService) {}
 
   intercept(ctx: ExecutionContext, next: CallHandler) {
-    const req = ctx.switchToHttp().getRequest() as Request;
+    const gqlContext = GqlExecutionContext.create(ctx);
+    const req = gqlContext.getContext() as Request;
     const target = ctx.getClass().name;
     const method = ctx.getHandler().name;
     const now = Date.now();
@@ -34,21 +36,21 @@ export class LoggingInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((body: ResponseBody) => {
-        this.logger.log_(`"${method}" method invoked successfully!`, target, {
-          took: `${Date.now() - now} ms`,
-          data: hideOrOmitDeep(body?.data, ['accessToken', 'refreshToken']),
-        });
-        this.logger.log_(
-          `${req.method} ${req.path} successfully!`,
-          API_CONTEXT,
-          {
-            request: getRequestInfo(req),
-            response: {
-              ...body,
-              data: hideOrOmitDeep(body?.data, ['accessToken', 'refreshToken']),
-            },
-          },
-        );
+        // this.logger.log_(`"${method}" method invoked successfully!`, target, {
+        //   took: `${Date.now() - now} ms`,
+        //   data: hideOrOmitDeep(body?.data, ['accessToken', 'refreshToken']),
+        // });
+        // this.logger.log_(
+        //   `${req.method} ${req.path} successfully!`,
+        //   API_CONTEXT,
+        //   {
+        //     request: getRequestInfo(req),
+        //     response: {
+        //       ...body,
+        //       data: hideOrOmitDeep(body?.data, ['accessToken', 'refreshToken']),
+        //     },
+        //   },
+        // );
         return body;
       }),
     );

@@ -79,12 +79,15 @@ import { GraphQLModule } from './modules/graphQL/graphQL.module';
     },
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestContextMiddleware).forRoutes('*');
-    consumer.apply(CorrelationIdMiddleware).forRoutes('*');
-    consumer
-      .apply(FilterQueryMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.GET });
-  }
-}
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     // consumer.apply(RequestContextMiddleware).forRoutes('*');
+//     consumer
+//       .apply(CorrelationIdMiddleware)
+//       .forRoutes({ path: 'graphql', method: RequestMethod.ALL });
+//     // consumer
+//     //   .apply(FilterQueryMiddleware)
+//     //   .forRoutes({ path: '*', method: RequestMethod.GET });
+//   }
+// }
+export class AppModule {}

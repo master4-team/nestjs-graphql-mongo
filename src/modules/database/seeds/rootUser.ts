@@ -15,7 +15,7 @@ async function createRootUser(
   hashService: EncryptionAndHashService,
 ): Promise<User> {
   const existedRoot = await userService.findOne({
-    filter: { username: rootUser.username },
+    where: { username: rootUser.username },
   });
   if (existedRoot) {
     await userService.deleteById(existedRoot._id);

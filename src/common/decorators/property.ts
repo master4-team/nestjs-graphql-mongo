@@ -4,6 +4,8 @@ import { Prop, PropOptions } from '@nestjs/mongoose';
 type GraphQLOptions = FieldOptions & {
   type?: ReturnTypeFunc;
   disable?: boolean;
+  filter?: boolean;
+  sort?: boolean;
 };
 
 type Options = {

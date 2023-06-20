@@ -58,7 +58,7 @@ export class RefreshTokenService extends BaseService<
     });
 
     const tokenRecord = await this.findOne({
-      filter: {
+      where: {
         userId: refreshJwtPayload.sub,
       },
     });
@@ -104,7 +104,7 @@ export class RefreshTokenService extends BaseService<
 
   async revoke(userId: string): Promise<RevokeTokenPayload> {
     const updated = await this.updateOne(
-      { filter: { userId } },
+      { where: { userId } },
       { refreshExpiresIn: this.updateRefreshTokenExpiry(true) },
     );
 
@@ -131,7 +131,7 @@ export class RefreshTokenService extends BaseService<
     );
 
     const tokenRecord = await this.findOne({
-      filter: { userId: validatedUser.userId },
+      where: { userId: validatedUser.userId },
     });
 
     let result: RefreshToken;

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DeleteResult } from 'mongodb';
-import { Model, Document, FilterQuery, ProjectionFields } from 'mongoose';
+import { Model, Document, ProjectionFields } from 'mongoose';
 import { LeanModel } from '../../common/types';
-import { ParsedFilterQuery } from '../filter/filter.types';
+import { Filter } from './base.types';
 
 @Injectable()
 export abstract class BaseService<T extends Document, K = LeanModel<T>> {
@@ -15,8 +15,8 @@ export abstract class BaseService<T extends Document, K = LeanModel<T>> {
 
   protected constructor(protected readonly model: Model<T>) {}
 
-  async count(filter: FilterQuery<K> = {}): Promise<number> {
-    return await this.model.count(filter);
+  async count(filter: Filter): Promise<number> {
+    return await this.model.count(filter.where);
   }
 
   async findAll(projections: ProjectionFields<K> = {}): Promise<K[]> {
@@ -26,9 +26,9 @@ export abstract class BaseService<T extends Document, K = LeanModel<T>> {
       .exec()) as K[];
   }
 
-  async find(filterQuery: ParsedFilterQuery<K> = {}): Promise<K[]> {
+  async find(filterQuery: Filter): Promise<K[]> {
     return (await this.model
-      .find(filterQuery.filter || {}, filterQuery.projections || {})
+      .find(filterQuery.where || {}, filterQuery.pick || {})
       .skip(filterQuery.skip)
       .limit(filterQuery.limit)
       .sort(filterQuery.sort)
@@ -53,9 +53,9 @@ export abstract class BaseService<T extends Document, K = LeanModel<T>> {
       .exec()) as K;
   }
 
-  async findOne(filterQuery: ParsedFilterQuery<K> = {}): Promise<K> {
+  async findOne(filterQuery: Filter): Promise<K> {
     return (await this.model
-      .findOne(filterQuery.filter || {}, filterQuery.projections || {})
+      .findOne(filterQuery.where || {}, filterQuery.pick || {})
       .sort(filterQuery.sort)
       .lean(BaseService.leanOptions)
       .exec()) as K;
@@ -83,27 +83,21 @@ export abstract class BaseService<T extends Document, K = LeanModel<T>> {
       .exec()) as K;
   }
 
-  async updateOne(
-    filterQuery: ParsedFilterQuery<K>,
-    updateDto: Partial<K>,
-  ): Promise<K> {
+  async updateOne(filterQuery: Filter, updateDto: Partial<K>): Promise<K> {
     return (await this.model
-      .findOneAndUpdate(filterQuery.filter, updateDto, {
+      .findOneAndUpdate(filterQuery.where, updateDto, {
         new: true,
-        projection: filterQuery.projections || {},
+        projection: filterQuery.pick || {},
       })
       .sort(filterQuery.sort)
       .lean(BaseService.leanOptions)
       .exec()) as K;
   }
 
-  async updateMany(
-    filterQuery: ParsedFilterQuery<K>,
-    updateDto: Partial<K>,
-  ): Promise<K[]> {
+  async updateMany(filterQuery: Filter, updateDto: Partial<K>): Promise<K[]> {
     await this.model
-      .updateMany(filterQuery.filter, updateDto, {
-        projection: filterQuery.projections || {},
+      .updateMany(filterQuery.where, updateDto, {
+        projection: filterQuery.pick || {},
       })
       .sort(filterQuery.sort)
       .exec();

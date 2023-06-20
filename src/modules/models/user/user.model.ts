@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Role } from '../../../common/decorators/roles';
 import { LeanModel } from '../../../common/types';
@@ -18,7 +18,7 @@ export class UserModel extends BaseModel {
 
   @Property({
     dbOptions: { required: false, unique: true, sparse: true },
-    graphQLOptions: { nullable: true },
+    graphQLOptions: { nullable: true, filter: true, sort: true },
   })
   email?: string;
 

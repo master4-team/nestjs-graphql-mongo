@@ -28,7 +28,7 @@ export class AuthService {
     username: string,
     password: string,
   ): Promise<ValidatedUser> {
-    const user = await this.usersService.findOne({ filter: { username } });
+    const user = await this.usersService.findOne({ where: { username } });
     if (!user) {
       throw new UnauthorizedException(ErrorMessageEnum.invalidCredentials);
     }
@@ -53,11 +53,11 @@ export class AuthService {
 
   async register(registerArgs: RegisterArgs): Promise<RegisterPayload1> {
     const { username, email, password } = registerArgs;
-    let filter: FilterQuery<User> = { username };
+    let where: FilterQuery<User> = { username };
     if (email) {
-      filter = { $or: [{ username }, { email }] };
+      where = { $or: [{ username }, { email }] };
     }
-    const user = await this.usersService.findOne({ filter });
+    const user = await this.usersService.findOne({ where });
     if (user) {
       throw new BusinessException(
         ErrorMessageEnum.userExisted,

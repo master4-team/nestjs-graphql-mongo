@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
   ForbiddenException,
   ServiceUnavailableException,
+  HttpException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { LoggerService } from '../../modules/logger/logger.service';
@@ -14,17 +15,24 @@ import { CustomException } from '../exceptions';
 import { DateTime } from 'luxon';
 import { messages } from '../constants/errorMessages';
 import { Message } from '../types';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
+import {
+  GqlArgumentsHost,
+  GqlExceptionFilter,
+  GqlExecutionContext,
+} from '@nestjs/graphql';
 
 @Catch()
-export class ErrorFilter implements ExceptionFilter {
+export class ErrorFilter implements GqlExceptionFilter {
   constructor(private readonly logger: LoggerService) {}
-  catch(error: Error, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const req = host.switchToHttp().getRequest() as Request;
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const gqlHost = GqlArgumentsHost.create(host);
+    const req = gqlHost.getContext();
+    // const req = host.getRequest() as Request;
     const correlationId = req.headers[CORRELATIONID];
 
     const now = DateTime.now().toISO();
-    const errorResponse = this.getErrorResponse(error);
+    const errorResponse = this.getErrorResponse(exception);
     const response = {
       url: `[${req.method}] ${req.url}`,
       ...errorResponse,
@@ -38,7 +46,7 @@ export class ErrorFilter implements ExceptionFilter {
 
     this.logger.error_(
       `Failed to ${req.method} ${req.url}`,
-      error,
+      exception,
       API_CONTEXT,
       {
         request: getRequestInfo(req),
@@ -46,7 +54,7 @@ export class ErrorFilter implements ExceptionFilter {
       },
     );
 
-    ctx.getResponse().status(response.statusCode).json(response);
+    // ctx.getResponse().status(response.statusCode).json(response);
   }
 
   private getErrorResponse(error: Error) {

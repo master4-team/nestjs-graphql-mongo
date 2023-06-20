@@ -3,6 +3,9 @@
 # ------------------------------------------------------
 
 type UserModel {
+  _id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
   email: String
   phone: String
@@ -10,13 +13,31 @@ type UserModel {
   role: Role!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 enum Role {
   ADMIN
   USER
   ROOT
 }
 
+type UserModelRecordDeleteResult {
+  acknowledged: Boolean!
+  deletedCount: Float!
+}
+
+type UserModelBasePayload {
+  data: UserModel
+  deleteResult: UserModelRecordDeleteResult
+}
+
 type LoginPayload {
+  _id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   refreshToken: String!
   iv: String!
   userId: String!
@@ -25,12 +46,10 @@ type LoginPayload {
   accessToken: String!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type RegisterPayload {
+  _id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
   email: String
   phone: String
@@ -47,7 +66,73 @@ input UserInput {
 }
 
 type Query {
+  findUserModelById(_id: String!): UserModel
+  findOneUserModel(where: UserModelFilter, sort: UserModelSort): UserModel
+  findManyUserModel(where: UserModelFilter, sort: UserModelSort, skip: Int = 0, limit: Int): [UserModel!]!
+  countUserModel(where: UserModelFilter): Int
+  createUserModel(record: UserInput!): UserModelBasePayload!
+  updateUserModelById(_id: String!, record: UserModelUpdateArg!): UserModelBasePayload!
+  removeUserModelById(_id: String!): UserModelBasePayload!
   hello: String!
+}
+
+input UserModelFilter {
+  _ids: [ID!]
+  AND: UserModelFilter
+  OR: UserModelFilter
+  _search: String
+  _id: ID
+  _operators: UserModelFilterOperator
+  createdAt: DateTime
+  updatedAt: DateTime
+  email: String
+}
+
+input UserModelFilterOperator {
+  _id: IDOperatorArgs
+  createdAt: DateOperatorArgs
+  updatedAt: DateOperatorArgs
+  email: StringOperatorArgs
+}
+
+input IDOperatorArgs {
+  in: [ID!]
+  nin: [ID!]
+}
+
+input DateOperatorArgs {
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+}
+
+input StringOperatorArgs {
+  in: [String!]
+  nin: [String!]
+}
+
+input UserModelSort {
+  _id: SortDirection
+  createdAt: SortDirection
+  updatedAt: SortDirection
+  email: SortDirection
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+input UserModelUpdateArg {
+  _id: ID
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: String
+  email: String
+  phone: String
+  username: String
+  role: Role
 }
 
 type Mutation {
