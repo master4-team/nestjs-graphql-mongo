@@ -25,13 +25,13 @@ export class LoggingInterceptor implements NestInterceptor {
     const now = Date.now();
 
     this.logger.log_(`${req.method} ${req.path}`, API_CONTEXT);
-    if (req.method === 'GET' && req[PARSED_FILTER]) {
-      this.logger.log_(
-        `Get parsed filter query`,
-        API_CONTEXT,
-        req[PARSED_FILTER],
-      );
-    }
+    // if (req.method === 'GET' && req[PARSED_FILTER]) {
+    //   this.logger.log_(
+    //     `Get parsed filter query`,
+    //     API_CONTEXT,
+    //     req[PARSED_FILTER],
+    //   );
+    // }
     this.logger.log_(`Invoking "${method}" method...`, target);
 
     return next.handle().pipe(

@@ -47,37 +47,37 @@ import { GraphQLModule } from './modules/graphQL/graphQL.module';
     CrudModule,
     GraphQLModule,
   ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RoleGuard,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: TransformResponseInterceptor,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: ErrorFilter,
-    },
-    {
-      provide: APP_PIPE,
-      useFactory: () =>
-        new ValidationPipe({
-          transform: true,
-          exceptionFactory: (errors: ValidationError[]) =>
-            new ValidationException(errors, HttpStatus.BAD_REQUEST),
-        }),
-    },
-  ],
+  // providers: [
+  //   {
+  //     provide: APP_GUARD,
+  //     useClass: JwtAuthGuard,
+  //   },
+  //   {
+  //     provide: APP_GUARD,
+  //     useClass: RoleGuard,
+  //   },
+  //   {
+  //     provide: APP_INTERCEPTOR,
+  //     useClass: LoggingInterceptor,
+  //   },
+  //   {
+  //     provide: APP_INTERCEPTOR,
+  //     useClass: TransformResponseInterceptor,
+  //   },
+  //   {
+  //     provide: APP_FILTER,
+  //     useClass: ErrorFilter,
+  //   },
+  //   {
+  //     provide: APP_PIPE,
+  //     useFactory: () =>
+  //       new ValidationPipe({
+  //         transform: true,
+  //         exceptionFactory: (errors: ValidationError[]) =>
+  //           new ValidationException(errors, HttpStatus.BAD_REQUEST),
+  //       }),
+  //   },
+  // ],
 })
 // export class AppModule implements NestModule {
 //   configure(consumer: MiddlewareConsumer) {

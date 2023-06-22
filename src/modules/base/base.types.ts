@@ -65,8 +65,7 @@ export interface IFindManyFilterArgs extends IFindOneFilterArgs {
 }
 
 export interface IBasePayload<TModel> {
-  data?: TModel;
-  deleteResult?: DeleteResult;
+  data: TModel | DeleteResult;
 }
 
 export interface IUpdateArgs {

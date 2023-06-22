@@ -38,7 +38,7 @@ export class UserModel extends BaseModel {
   password: string;
 
   @Property({
-    dbOptions: { required: true, unique: true, type: String, enum: Role },
+    dbOptions: { required: true, type: String, enum: Role },
     graphQLOptions: { type: () => Role },
   })
   role: Role;

@@ -1,5 +1,6 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { RefreshToken, RefreshTokenModel } from './refreshToken.model';
+import { ObjectType } from '@nestjs/graphql';
+import { RefreshToken } from './refreshToken.model';
+import { BaseRefreshTokenPayload } from './refreshToken.base';
 
 export type RefreshTokenPayload1 = RefreshToken & {
   accessToken: string;
@@ -9,9 +10,5 @@ export type RevokeTokenPayload = {
   refreshExpiresIn: Date;
 };
 
-// graphQ:
 @ObjectType()
-export class RefreshTokenPayload extends RefreshTokenModel {
-  @Field()
-  accessToken: string;
-}
+export class RefreshTokenPayload extends BaseRefreshTokenPayload {}

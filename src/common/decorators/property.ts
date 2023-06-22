@@ -9,13 +9,14 @@ type GraphQLOptions = FieldOptions & {
 };
 
 type Options = {
-  dbOptions?: PropOptions;
+  dbOptions?: PropOptions & { disable?: boolean };
   graphQLOptions?: GraphQLOptions;
 };
 
 export const Property = (options: Options = {}): PropertyDecorator => {
   return function decorate(target: object, field: string) {
     const graphQLOptions = options.graphQLOptions || {};
+    const dbObtions = options.dbOptions || {};
     if (!graphQLOptions.disable) {
       if (graphQLOptions.type) {
         Field(graphQLOptions.type, graphQLOptions)(target, field);
@@ -23,6 +24,8 @@ export const Property = (options: Options = {}): PropertyDecorator => {
         Field(graphQLOptions)(target, field);
       }
     }
-    Prop(options.dbOptions)(target, field);
+    if (!dbObtions.disable) {
+      Prop(dbObtions)(target, field);
+    }
   };
 };

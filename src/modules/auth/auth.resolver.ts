@@ -1,28 +1,23 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { AuthorizedUser } from '../../common/decorators/authorizedUser';
 import {
+  LoginArgs,
   LoginPayload,
-  RegisterArgs,
+  RegisterInput,
   RegisterPayload,
-  ValidatedUser,
 } from './auth.types';
-import { RefreshTokenPayload1 } from '../models/refreshToken/refreshToken.types';
-import { User } from '../models/user/user.model';
 
 @Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
   @Mutation(() => LoginPayload)
-  async login(
-    @AuthorizedUser() user: ValidatedUser,
-  ): Promise<RefreshTokenPayload1> {
-    return this.authService.login(user);
+  async login(@Args() args: LoginArgs): Promise<LoginPayload> {
+    return this.authService.login(args);
   }
 
   @Mutation(() => RegisterPayload)
-  async register(@Args() registerArgs: RegisterArgs): Promise<User> {
-    return this.authService.register(registerArgs);
+  async register(@Args('data') input: RegisterInput): Promise<RegisterPayload> {
+    return this.authService.register(input);
   }
 }

@@ -21,7 +21,7 @@ import { RequestContextMiddleware } from '../../common/middlewares/context/conte
         },
         env: EnvironmentEnum.DEV,
       },
-      // context: ({ req }) => ({ req }),
+      context: ({ req }) => ({ req }),
     }),
   ],
 })

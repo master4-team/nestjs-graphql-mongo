@@ -1,14 +1,13 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Role } from '../../common/decorators/roles';
 import { BusinessException } from '../../common/exceptions';
-import { RegisterDto } from './auth.dto';
 import {
-  LoginPayload1,
-  RegisterArgs,
-  RegisterPayload1,
+  LoginArgs,
+  LoginPayload,
+  RegisterInput,
+  RegisterPayload,
   ValidatedUser,
 } from './auth.types';
-import hideOrOmitFields from '../../utils/hideOrOmitFields';
 import { ErrorMessageEnum } from '../../common/types';
 import { UserService } from '../models/user/user.service';
 import { RefreshTokenService } from '../models/refreshToken/refreshToken.service';
@@ -24,7 +23,39 @@ export class AuthService {
     private readonly encryptionAndHashService: EncryptionAndHashService,
   ) {}
 
-  async validateUser(
+  async login(loginArgs: LoginArgs): Promise<LoginPayload> {
+    const validatedUser = await this.validateUser(
+      loginArgs.username,
+      loginArgs.password,
+    );
+    return await this.refreshTokenService.createToken(validatedUser);
+  }
+
+  async register(registerInput: RegisterInput): Promise<RegisterPayload> {
+    const { username, email, password } = registerInput;
+    let where: FilterQuery<User> = { username };
+    if (email) {
+      where = { $or: [{ username }, { email }] };
+    }
+    const user = await this.usersService.findOne({ where });
+    if (user) {
+      throw new BusinessException(
+        ErrorMessageEnum.userExisted,
+        HttpStatus.CONFLICT,
+      );
+    }
+    const hashedPassword = await this.encryptionAndHashService.hash(password);
+
+    const created = await this.usersService.create({
+      ...registerInput,
+      password: hashedPassword,
+      role: Role.USER,
+    });
+
+    return { data: created };
+  }
+
+  private async validateUser(
     username: string,
     password: string,
   ): Promise<ValidatedUser> {
@@ -45,33 +76,5 @@ export class AuthService {
       userId: user._id,
       role: user.role,
     };
-  }
-
-  async login(validatedUser: ValidatedUser): Promise<LoginPayload1> {
-    return await this.refreshTokenService.createToken(validatedUser);
-  }
-
-  async register(registerArgs: RegisterArgs): Promise<RegisterPayload1> {
-    const { username, email, password } = registerArgs;
-    let where: FilterQuery<User> = { username };
-    if (email) {
-      where = { $or: [{ username }, { email }] };
-    }
-    const user = await this.usersService.findOne({ where });
-    if (user) {
-      throw new BusinessException(
-        ErrorMessageEnum.userExisted,
-        HttpStatus.CONFLICT,
-      );
-    }
-    const hashedPassword = await this.encryptionAndHashService.hash(password);
-
-    const result = await this.usersService.create({
-      ...registerArgs,
-      password: hashedPassword,
-      role: Role.USER,
-    });
-
-    return hideOrOmitFields(result, ['password'], true) as RegisterPayload1;
   }
 }

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { RefreshTokenJwtModule } from '../../jwt/refreshToken.jwt.module';
 import { TokenJwtModule } from '../../jwt/token.jwt.module';
-import { RefreshTokenController } from './refreshToken.controller';
 import { RefreshTokenService } from './refreshToken.service';
 import { EncryptionAndHashModule } from '../../encryptionAndHash/encryptionAndHash.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RefreshTokenModel, RefreshTokenSchema } from './refreshToken.model';
+import { RefreshTokenResolver } from './refreshToken.resolver';
 
 @Module({
   imports: [
@@ -16,8 +16,7 @@ import { RefreshTokenModel, RefreshTokenSchema } from './refreshToken.model';
     RefreshTokenJwtModule,
     EncryptionAndHashModule,
   ],
-  controllers: [RefreshTokenController],
-  providers: [RefreshTokenService],
+  providers: [RefreshTokenService, RefreshTokenResolver],
   exports: [RefreshTokenService],
 })
 export class RefreshTokenModule {}

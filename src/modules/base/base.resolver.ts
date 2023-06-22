@@ -9,6 +9,7 @@ import {
   Int,
   ObjectType,
   Resolver,
+  createUnionType,
   registerEnumType,
 } from '@nestjs/graphql';
 import { getFieldsAndDecoratorForType } from '@nestjs/graphql/dist/schema-builder/utils/get-fields-and-decorator.util';
@@ -298,13 +299,21 @@ export function createBaseResolver<TModel extends BaseModel>(
     deletedCount: number;
   }
 
+  const PayloadDataUnionType = createUnionType({
+    name: `${modelName}DataUnionType`,
+    types: () => [ModelCls, RecordDeleteResult] as const,
+    resolveType: (value) => {
+      if (value?.hasOwnProperty('acknowledged')) {
+        return RecordDeleteResult;
+      }
+      return ModelCls;
+    },
+  });
+
   @ObjectType(`${modelName}BasePayload`)
   class BasePayload implements IBasePayload<TModel> {
-    @Field(() => ModelCls, { nullable: true })
-    public data?: TModel;
-
-    @Field(() => RecordDeleteResult, { nullable: true })
-    public deleteResult?: DeleteResult;
+    @Field(() => PayloadDataUnionType)
+    public data: TModel | DeleteResult;
   }
 
   @Resolver({ isAbstract: true })
@@ -313,7 +322,7 @@ export function createBaseResolver<TModel extends BaseModel>(
       private readonly service: BaseService<HydratedTModel<TModel>, TModel>,
     ) {}
 
-    @Roles(...read.roles)
+    @Roles(...(read.roles || []))
     @Query(() => ModelCls, {
       name: `find${modelName}ById`,
       nullable: true,
@@ -324,7 +333,7 @@ export function createBaseResolver<TModel extends BaseModel>(
     }
 
     @SkipJwtGuard()
-    @Roles(...read.roles)
+    @Roles(...(read.roles || []))
     @Query(() => ModelCls, {
       name: `findOne${modelName}`,
       nullable: true,
@@ -343,7 +352,7 @@ export function createBaseResolver<TModel extends BaseModel>(
       return this.service.findOne({ where, sort, pick });
     }
 
-    @Roles(...read.roles)
+    @Roles(...(read.roles || []))
     @Query(() => [ModelCls], {
       name: `findMany${modelName}`,
       active: read.active,
@@ -367,7 +376,7 @@ export function createBaseResolver<TModel extends BaseModel>(
       });
     }
 
-    @Roles(...read.roles)
+    @Roles(...(read.roles || []))
     @Query(() => Int, {
       name: `count${modelName}`,
       nullable: true,
@@ -378,7 +387,7 @@ export function createBaseResolver<TModel extends BaseModel>(
       return this.service.count({ where });
     }
 
-    @Roles(...create.roles)
+    @Roles(...(create.roles || []))
     @Mutation(() => BasePayload, {
       name: `create${modelName}`,
       active: create.active,
@@ -391,7 +400,7 @@ export function createBaseResolver<TModel extends BaseModel>(
       return { data };
     }
 
-    @Roles(...update.roles)
+    @Roles(...(update.roles || []))
     @Mutation(() => BasePayload, {
       name: `update${modelName}ById`,
       active: update.active,
@@ -404,7 +413,7 @@ export function createBaseResolver<TModel extends BaseModel>(
       return { data };
     }
 
-    @Roles(...remove.roles)
+    @Roles(...(remove.roles || []))
     @Mutation(() => BasePayload, {
       name: `remove${modelName}ById`,
       active: remove.active,
@@ -412,7 +421,7 @@ export function createBaseResolver<TModel extends BaseModel>(
     public async removeById(@Args('_id') _id: string): Promise<BasePayload> {
       const deleteResult = await this.service.deleteById(_id);
 
-      return { deleteResult };
+      return { data: deleteResult };
     }
   }
 

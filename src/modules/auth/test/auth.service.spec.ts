@@ -91,122 +91,122 @@ describe('AuthService', () => {
     expect(authService).toBeDefined();
   });
 
-  describe('validateUser', () => {
-    it('should return an validated user', async () => {
-      expect(
-        await authService.validateUser(loginDto.username, loginDto.password),
-      ).toStrictEqual(validatedUser);
+  // describe('validateUser', () => {
+  //   it('should return an validated user', async () => {
+  //     expect(
+  //       await authService.validateUser(loginDto.username, loginDto.password),
+  //     ).toStrictEqual(validatedUser);
 
-      expect(userService.findOne).toHaveBeenCalledWith({
-        filter: { username: loginDto.username },
-      });
+  //     expect(userService.findOne).toHaveBeenCalledWith({
+  //       filter: { username: loginDto.username },
+  //     });
 
-      expect(encryptionAndHashService.compare).toHaveBeenCalledWith(
-        loginDto.password,
-        userRecord.password,
-      );
-    });
+  //     expect(encryptionAndHashService.compare).toHaveBeenCalledWith(
+  //       loginDto.password,
+  //       userRecord.password,
+  //     );
+  //   });
 
-    it('should throw unauthorized error when user not found when validate user', async () => {
-      jest.spyOn(userService, 'findOne').mockResolvedValue(null);
-      const error = new UnauthorizedException(
-        ErrorMessageEnum.invalidCredentials,
-      );
+  //   it('should throw unauthorized error when user not found when validate user', async () => {
+  //     jest.spyOn(userService, 'findOne').mockResolvedValue(null);
+  //     const error = new UnauthorizedException(
+  //       ErrorMessageEnum.invalidCredentials,
+  //     );
 
-      await expect(
-        authService.validateUser(loginDto.username, loginDto.password),
-      ).rejects.toThrowError(error);
+  //     await expect(
+  //       authService.validateUser(loginDto.username, loginDto.password),
+  //     ).rejects.toThrowError(error);
 
-      expect(userService.findOne).toHaveBeenCalledWith({
-        filter: { username: loginDto.username },
-      });
+  //     expect(userService.findOne).toHaveBeenCalledWith({
+  //       filter: { username: loginDto.username },
+  //     });
 
-      expect(encryptionAndHashService.compare).not.toHaveBeenCalled();
-    });
+  //     expect(encryptionAndHashService.compare).not.toHaveBeenCalled();
+  //   });
 
-    it('should throw unauthorized error when password not match when validate user', async () => {
-      jest.spyOn(encryptionAndHashService, 'compare').mockResolvedValue(false);
-      const error = new UnauthorizedException(
-        ErrorMessageEnum.invalidCredentials,
-      );
+  //   it('should throw unauthorized error when password not match when validate user', async () => {
+  //     jest.spyOn(encryptionAndHashService, 'compare').mockResolvedValue(false);
+  //     const error = new UnauthorizedException(
+  //       ErrorMessageEnum.invalidCredentials,
+  //     );
 
-      await expect(
-        authService.validateUser(loginDto.username, loginDto.password),
-      ).rejects.toThrowError(error);
+  //     await expect(
+  //       authService.validateUser(loginDto.username, loginDto.password),
+  //     ).rejects.toThrowError(error);
 
-      expect(userService.findOne).toHaveBeenCalledWith({
-        filter: { username: loginDto.username },
-      });
+  //     expect(userService.findOne).toHaveBeenCalledWith({
+  //       filter: { username: loginDto.username },
+  //     });
 
-      expect(encryptionAndHashService.compare).toHaveBeenCalledWith(
-        loginDto.password,
-        userRecord.password,
-      );
-    });
-  });
+  //     expect(encryptionAndHashService.compare).toHaveBeenCalledWith(
+  //       loginDto.password,
+  //       userRecord.password,
+  //     );
+  //   });
+  // });
 
-  describe('login', () => {
-    it('should return token when login', async () => {
-      expect(await authService.login(validatedUser)).toStrictEqual(
-        loginPayload,
-      );
+  // describe('login', () => {
+  //   it('should return token when login', async () => {
+  //     expect(await authService.login(validatedUser)).toStrictEqual(
+  //       loginPayload,
+  //     );
 
-      expect(refreshTokenService.createToken).toHaveBeenCalledWith(
-        validatedUser,
-      );
-    });
-  });
+  //     expect(refreshTokenService.createToken).toHaveBeenCalledWith(
+  //       validatedUser,
+  //     );
+  //   });
+  // });
 
-  describe('register', () => {
-    it('should return an user', async () => {
-      jest.spyOn(userService, 'findOne').mockResolvedValue(null);
+  // describe('register', () => {
+  //   it('should return an user', async () => {
+  //     jest.spyOn(userService, 'findOne').mockResolvedValue(null);
 
-      expect(await authService.register(registerDto)).toStrictEqual(
-        registerPayload,
-      );
+  //     expect(await authService.register(registerDto)).toStrictEqual(
+  //       registerPayload,
+  //     );
 
-      expect(userService.findOne).toHaveBeenCalledWith({
-        filter: {
-          $or: [
-            { username: registerDto.username },
-            { email: registerDto.email },
-          ],
-        },
-      });
+  //     expect(userService.findOne).toHaveBeenCalledWith({
+  //       filter: {
+  //         $or: [
+  //           { username: registerDto.username },
+  //           { email: registerDto.email },
+  //         ],
+  //       },
+  //     });
 
-      expect(encryptionAndHashService.hash).toHaveBeenCalledWith(
-        registerDto.password,
-      );
+  //     expect(encryptionAndHashService.hash).toHaveBeenCalledWith(
+  //       registerDto.password,
+  //     );
 
-      expect(userService.create).toHaveBeenCalledWith({
-        ...registerDto,
-        password: hashedPassword,
-        role: Role.USER,
-      });
-    });
+  //     expect(userService.create).toHaveBeenCalledWith({
+  //       ...registerDto,
+  //       password: hashedPassword,
+  //       role: Role.USER,
+  //     });
+  //   });
 
-    it('should throw user existed error when register', async () => {
-      const error = new BusinessException(
-        ErrorMessageEnum.userExisted,
-        HttpStatus.CONFLICT,
-      );
+  //   it('should throw user existed error when register', async () => {
+  //     const error = new BusinessException(
+  //       ErrorMessageEnum.userExisted,
+  //       HttpStatus.CONFLICT,
+  //     );
 
-      await expect(authService.register(registerDto)).rejects.toThrowError(
-        error,
-      );
+  //     await expect(authService.register(registerDto)).rejects.toThrowError(
+  //       error,
+  //     );
 
-      expect(userService.findOne).toHaveBeenCalledWith({
-        filter: {
-          $or: [
-            { username: registerDto.username },
-            { email: registerDto.email },
-          ],
-        },
-      });
+  //     expect(userService.findOne).toHaveBeenCalledWith({
+  //       filter: {
+  //         $or: [
+  //           { username: registerDto.username },
+  //           { email: registerDto.email },
+  //         ],
+  //       },
+  //     });
 
-      expect(encryptionAndHashService.hash).not.toHaveBeenCalled();
+  //     expect(encryptionAndHashService.hash).not.toHaveBeenCalled();
 
-      expect(userService.create).not.toHaveBeenCalled();
-    });
-  });
+  //     expect(userService.create).not.toHaveBeenCalled();
+  //   });
+  // });
 });

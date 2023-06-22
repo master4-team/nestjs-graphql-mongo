@@ -1,20 +1,15 @@
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { UserModel } from './user.model';
-import { createBaseResolver } from '../../base/base.resolver';
-import { Role } from '../../../common/decorators/roles';
+import { ValidatedUser } from '../../auth/auth.types';
+import { AuthorizedUser } from '../../../common/decorators/authorizedUser';
+import { BaseUserResolver } from './user.base';
+import {
+  ChangePasswordArgs,
+  UpdateProfileArgs,
+  UserPayload,
+} from './user.types';
 
-const { BaseResolver: BaseUserResolver, BasePayload: UserPayload } =
-  createBaseResolver<UserModel>(UserModel, {
-    action: {
-      read: { active: true, roles: [] },
-      create: { active: true, roles: [] },
-      update: { active: true, roles: [] },
-      remove: { active: true, roles: [] },
-    },
-  });
-
-@Resolver(() => UserModel)
+@Resolver(() => UserPayload)
 export class UserResolver extends BaseUserResolver {
   constructor(private readonly userService: UserService) {
     super(userService);
@@ -23,5 +18,28 @@ export class UserResolver extends BaseUserResolver {
   @Query(() => String)
   hello() {
     return 'hello';
+  }
+
+  @Query(() => UserPayload)
+  async getProfile(
+    @AuthorizedUser() user: ValidatedUser,
+  ): Promise<UserPayload> {
+    return await this.userService.getProfile(user.userId);
+  }
+
+  @Mutation(() => UserPayload)
+  async updateProfile(
+    @AuthorizedUser() user: ValidatedUser,
+    @Args() args: UpdateProfileArgs,
+  ): Promise<UserPayload> {
+    return await this.userService.updateProfile(user.userId, args);
+  }
+
+  @Mutation(() => UserPayload)
+  async changePassword(
+    @AuthorizedUser() user: ValidatedUser,
+    @Args() args: ChangePasswordArgs,
+  ): Promise<UserPayload> {
+    return await this.userService.changePassword(user.userId, args);
   }
 }

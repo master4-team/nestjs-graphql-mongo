@@ -27,6 +27,9 @@ export class RefreshTokenModel extends BaseModel {
   @Property()
   refreshExpiresIn: Date;
 
+  @Property({ dbOptions: { disable: true } })
+  accessToken?: string;
+
   @Property({
     dbOptions: {
       type: ObjectId,

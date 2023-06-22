@@ -4,11 +4,13 @@ import { Model } from 'mongoose';
 import { BusinessException } from '../../../common/exceptions';
 import { BaseService } from '../../base/base.service';
 import { EncryptionAndHashService } from '../../encryptionAndHash/encrypttionAndHash.service';
-import { ChangePasswordDto, UpdateUserDto } from './user.dto';
 import { User, UserDocument, UserModel } from './user.model';
 import { ErrorMessageEnum } from '../../../common/types';
-import { UserPayload1 } from './user.types';
-import hideOrOmitDeep from '../../../utils/hideOrOmitFields';
+import {
+  ChangePasswordArgs,
+  UpdateProfileArgs,
+  UserPayload,
+} from './user.types';
 
 @Injectable()
 export class UserService extends BaseService<UserDocument, User> {
@@ -20,26 +22,30 @@ export class UserService extends BaseService<UserDocument, User> {
     super(userModel);
   }
 
-  async findUserById(id: string): Promise<UserPayload1> {
+  async getProfile(id: string): Promise<UserPayload> {
     const user = await this.findById(id);
     if (!user) {
-      return null;
+      return { data: null };
     }
-    return hideOrOmitDeep(user, ['password'], true) as UserPayload1;
+    return {
+      data: user,
+    };
   }
 
-  async updateUserById(
+  async updateProfile(
     id: string,
-    updateDto: UpdateUserDto,
-  ): Promise<UserPayload1> {
-    const updated = await this.updateById(id, updateDto);
-    return hideOrOmitDeep(updated, ['password'], true) as UserPayload1;
+    updateArgs: UpdateProfileArgs,
+  ): Promise<UserPayload> {
+    const updated = await this.updateById(id, updateArgs);
+    return {
+      data: updated,
+    };
   }
 
   async changePassword(
     userId: string,
-    changePasswordDto: ChangePasswordDto,
-  ): Promise<UserPayload1> {
+    changePasswordArgs: ChangePasswordArgs,
+  ): Promise<UserPayload> {
     const user = await this.findById(userId);
 
     if (!user) {
@@ -49,7 +55,7 @@ export class UserService extends BaseService<UserDocument, User> {
       );
     }
 
-    const { oldPassword, newPassword } = changePasswordDto;
+    const { oldPassword, newPassword } = changePasswordArgs;
 
     if (oldPassword === newPassword) {
       throw new BusinessException(
@@ -59,7 +65,7 @@ export class UserService extends BaseService<UserDocument, User> {
     }
 
     const isOldPasswordValid = await this.encryptionAndHashService.compare(
-      changePasswordDto.oldPassword,
+      changePasswordArgs.oldPassword,
       user.password,
     );
 
@@ -78,6 +84,8 @@ export class UserService extends BaseService<UserDocument, User> {
       password: newPasswordHash,
     });
 
-    return hideOrOmitDeep(updated, ['password'], true) as UserPayload1;
+    return {
+      data: updated,
+    };
   }
 }

@@ -14,7 +14,7 @@ import {
   TechnicalException,
 } from '../../../common/exceptions';
 import { DateTime } from 'luxon';
-import { RefreshTokenPayload1, RevokeTokenPayload } from './refreshToken.types';
+import { RefreshTokenPayload } from './refreshToken.types';
 import { EncryptionAndHashService } from '../../encryptionAndHash/encrypttionAndHash.service';
 import { ErrorMessageEnum } from '../../../common/types';
 import { LoggerService } from '../../logger/logger.service';
@@ -48,7 +48,7 @@ export class RefreshTokenService extends BaseService<
   async refresh(
     accessToken: string,
     refreshToken: string,
-  ): Promise<RefreshTokenPayload1> {
+  ): Promise<RefreshTokenPayload> {
     const jwtPayload = await this.verify(accessToken, 'access', {
       ignoreExpiration: true,
     });
@@ -99,23 +99,23 @@ export class RefreshTokenService extends BaseService<
       refreshExpiresIn: this.updateRefreshTokenExpiry(),
     });
 
-    return { ...updated, refreshToken, accessToken: newAccessToken };
+    return { data: { ...updated, refreshToken, accessToken: newAccessToken } };
   }
 
-  async revoke(userId: string): Promise<RevokeTokenPayload> {
+  async revoke(userId: string): Promise<RefreshTokenPayload> {
     const updated = await this.updateOne(
       { where: { userId } },
       { refreshExpiresIn: this.updateRefreshTokenExpiry(true) },
     );
 
     return {
-      refreshExpiresIn: updated.refreshExpiresIn,
+      data: updated,
     };
   }
 
   async createToken(
     validatedUser: ValidatedUser,
-  ): Promise<RefreshTokenPayload1> {
+  ): Promise<RefreshTokenPayload> {
     const payload: JwtPayload = {
       username: validatedUser.username,
       role: validatedUser.role,
@@ -151,7 +151,7 @@ export class RefreshTokenService extends BaseService<
       });
     }
 
-    return { ...result, refreshToken: refreshToken, accessToken };
+    return { data: { ...result, refreshToken, accessToken } };
   }
 
   private updateRefreshTokenExpiry(revoke = false) {

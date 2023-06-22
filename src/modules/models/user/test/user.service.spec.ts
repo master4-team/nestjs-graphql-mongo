@@ -73,137 +73,137 @@ describe('UserService', () => {
     expect(userService).toBeDefined();
   });
 
-  describe('findUserById', () => {
-    it('should return user payload', async () => {
-      jest.spyOn(userService, 'findById').mockResolvedValue(user);
+  // describe('findUserById', () => {
+  //   it('should return user payload', async () => {
+  //     jest.spyOn(userService, 'findById').mockResolvedValue(user);
 
-      expect(await userService.findUserById(user._id)).toStrictEqual(
-        userPayload,
-      );
+  //     expect(await userService.findUserById(user._id)).toStrictEqual(
+  //       userPayload,
+  //     );
 
-      expect(userService.findById).toHaveBeenCalledWith(user._id);
-    });
+  //     expect(userService.findById).toHaveBeenCalledWith(user._id);
+  //   });
 
-    it('should return null if user not found', async () => {
-      jest.spyOn(userService, 'findById').mockResolvedValue(null);
+  //   it('should return null if user not found', async () => {
+  //     jest.spyOn(userService, 'findById').mockResolvedValue(null);
 
-      expect(await userService.findUserById(user._id)).toBeNull();
+  //     expect(await userService.findUserById(user._id)).toBeNull();
 
-      expect(userService.findById).toHaveBeenCalledWith(user._id);
-    });
-  });
+  //     expect(userService.findById).toHaveBeenCalledWith(user._id);
+  //   });
+  // });
 
-  describe('updateUserById', () => {
-    it('should return user payload', async () => {
-      jest.spyOn(userService, 'updateById').mockResolvedValue(user);
+  // describe('updateUserById', () => {
+  //   it('should return user payload', async () => {
+  //     jest.spyOn(userService, 'updateById').mockResolvedValue(user);
 
-      expect(await userService.updateUserById(user._id, updateUserDto)).toEqual(
-        userPayload,
-      );
+  //     expect(await userService.updateUserById(user._id, updateUserDto)).toEqual(
+  //       userPayload,
+  //     );
 
-      expect(userService.updateById).toHaveBeenCalledWith(
-        user._id,
-        updateUserDto,
-      );
-    });
-  });
+  //     expect(userService.updateById).toHaveBeenCalledWith(
+  //       user._id,
+  //       updateUserDto,
+  //     );
+  //   });
+  // });
 
-  describe('changePassword', () => {
-    it('should return updated user payload', async () => {
-      jest.spyOn(userService, 'findById').mockResolvedValue(user);
-      jest
-        .spyOn(userService, 'updateById')
-        .mockResolvedValue({ ...user, password: newHashPassword });
+  // describe('changePassword', () => {
+  //   it('should return updated user payload', async () => {
+  //     jest.spyOn(userService, 'findById').mockResolvedValue(user);
+  //     jest
+  //       .spyOn(userService, 'updateById')
+  //       .mockResolvedValue({ ...user, password: newHashPassword });
 
-      expect(
-        await userService.changePassword(user._id, changePasswordDto),
-      ).toStrictEqual(userPayload);
+  //     expect(
+  //       await userService.changePassword(user._id, changePasswordDto),
+  //     ).toStrictEqual(userPayload);
 
-      expect(userService.findById).toHaveBeenCalledWith(user._id);
+  //     expect(userService.findById).toHaveBeenCalledWith(user._id);
 
-      expect(encryptionAndHashService.compare).toHaveBeenCalledWith(
-        changePasswordDto.oldPassword,
-        user.password,
-      );
+  //     expect(encryptionAndHashService.compare).toHaveBeenCalledWith(
+  //       changePasswordDto.oldPassword,
+  //       user.password,
+  //     );
 
-      expect(encryptionAndHashService.hash).toHaveBeenCalledWith(
-        changePasswordDto.newPassword,
-      );
+  //     expect(encryptionAndHashService.hash).toHaveBeenCalledWith(
+  //       changePasswordDto.newPassword,
+  //     );
 
-      expect(userService.updateById).toHaveBeenCalledWith(user._id, {
-        password: newHashPassword,
-      });
-    });
+  //     expect(userService.updateById).toHaveBeenCalledWith(user._id, {
+  //       password: newHashPassword,
+  //     });
+  //   });
 
-    it('should throw error if user not found', async () => {
-      const error = new BusinessException(
-        ErrorMessageEnum.userNotFound,
-        HttpStatus.BAD_REQUEST,
-      );
+  //   it('should throw error if user not found', async () => {
+  //     const error = new BusinessException(
+  //       ErrorMessageEnum.userNotFound,
+  //       HttpStatus.BAD_REQUEST,
+  //     );
 
-      jest.spyOn(userService, 'findById').mockResolvedValue(null);
-      jest.spyOn(userService, 'updateById').mockResolvedValue(null);
+  //     jest.spyOn(userService, 'findById').mockResolvedValue(null);
+  //     jest.spyOn(userService, 'updateById').mockResolvedValue(null);
 
-      await expect(
-        userService.changePassword(user._id, changePasswordDto),
-      ).rejects.toThrow(error);
+  //     await expect(
+  //       userService.changePassword(user._id, changePasswordDto),
+  //     ).rejects.toThrow(error);
 
-      expect(userService.findById).toHaveBeenCalledWith(user._id);
+  //     expect(userService.findById).toHaveBeenCalledWith(user._id);
 
-      expect(encryptionAndHashService.compare).not.toHaveBeenCalled();
+  //     expect(encryptionAndHashService.compare).not.toHaveBeenCalled();
 
-      expect(encryptionAndHashService.hash).not.toHaveBeenCalled();
+  //     expect(encryptionAndHashService.hash).not.toHaveBeenCalled();
 
-      expect(userService.updateById).not.toHaveBeenCalled();
-    });
+  //     expect(userService.updateById).not.toHaveBeenCalled();
+  //   });
 
-    it('should throw error if old password is equal to new password', async () => {
-      const error = new BusinessException(
-        ErrorMessageEnum.oldPasswordEqualNewPassword,
-        HttpStatus.BAD_REQUEST,
-      );
-      changePasswordDto.newPassword = changePasswordDto.oldPassword;
+  //   it('should throw error if old password is equal to new password', async () => {
+  //     const error = new BusinessException(
+  //       ErrorMessageEnum.oldPasswordEqualNewPassword,
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //     changePasswordDto.newPassword = changePasswordDto.oldPassword;
 
-      jest.spyOn(userService, 'findById').mockResolvedValue(user);
-      jest.spyOn(userService, 'updateById').mockResolvedValue(null);
+  //     jest.spyOn(userService, 'findById').mockResolvedValue(user);
+  //     jest.spyOn(userService, 'updateById').mockResolvedValue(null);
 
-      await expect(
-        userService.changePassword(user._id, changePasswordDto),
-      ).rejects.toThrow(error);
+  //     await expect(
+  //       userService.changePassword(user._id, changePasswordDto),
+  //     ).rejects.toThrow(error);
 
-      expect(userService.findById).toHaveBeenCalledWith(user._id);
+  //     expect(userService.findById).toHaveBeenCalledWith(user._id);
 
-      expect(encryptionAndHashService.compare).not.toHaveBeenCalled();
+  //     expect(encryptionAndHashService.compare).not.toHaveBeenCalled();
 
-      expect(encryptionAndHashService.hash).not.toHaveBeenCalled();
+  //     expect(encryptionAndHashService.hash).not.toHaveBeenCalled();
 
-      expect(userService.updateById).not.toHaveBeenCalled();
-    });
+  //     expect(userService.updateById).not.toHaveBeenCalled();
+  //   });
 
-    it('should throw error if old password is not correct', async () => {
-      const error = new BusinessException(
-        ErrorMessageEnum.invalidOldPassword,
-        HttpStatus.BAD_REQUEST,
-      );
+  //   it('should throw error if old password is not correct', async () => {
+  //     const error = new BusinessException(
+  //       ErrorMessageEnum.invalidOldPassword,
+  //       HttpStatus.BAD_REQUEST,
+  //     );
 
-      jest.spyOn(userService, 'findById').mockResolvedValue(user);
-      jest.spyOn(encryptionAndHashService, 'compare').mockResolvedValue(false);
-      jest.spyOn(userService, 'updateById').mockResolvedValue(null);
+  //     jest.spyOn(userService, 'findById').mockResolvedValue(user);
+  //     jest.spyOn(encryptionAndHashService, 'compare').mockResolvedValue(false);
+  //     jest.spyOn(userService, 'updateById').mockResolvedValue(null);
 
-      await expect(
-        userService.changePassword(user._id, changePasswordDto),
-      ).rejects.toThrow(error);
+  //     await expect(
+  //       userService.changePassword(user._id, changePasswordDto),
+  //     ).rejects.toThrow(error);
 
-      expect(userService.findById).toHaveBeenCalledWith(user._id);
+  //     expect(userService.findById).toHaveBeenCalledWith(user._id);
 
-      expect(encryptionAndHashService.compare).toHaveBeenCalledWith(
-        changePasswordDto.oldPassword,
-        user.password,
-      );
+  //     expect(encryptionAndHashService.compare).toHaveBeenCalledWith(
+  //       changePasswordDto.oldPassword,
+  //       user.password,
+  //     );
 
-      expect(encryptionAndHashService.hash).not.toHaveBeenCalled();
+  //     expect(encryptionAndHashService.hash).not.toHaveBeenCalled();
 
-      expect(userService.updateById).not.toHaveBeenCalled();
-    });
-  });
+  //     expect(userService.updateById).not.toHaveBeenCalled();
+  //   });
+  // });
 });

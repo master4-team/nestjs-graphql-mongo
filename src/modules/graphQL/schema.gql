@@ -24,17 +24,28 @@ enum Role {
   ROOT
 }
 
+type UserModelBasePayload {
+  data: UserModelDataUnionType!
+}
+
+union UserModelDataUnionType = UserModel | UserModelRecordDeleteResult
+
 type UserModelRecordDeleteResult {
   acknowledged: Boolean!
   deletedCount: Float!
 }
 
-type UserModelBasePayload {
-  data: UserModel
-  deleteResult: UserModelRecordDeleteResult
+type UserPayload {
+  data: UserModelDataUnionType!
 }
 
-type LoginPayload {
+type RefreshTokenPayload {
+  data: RefreshTokenModelDataUnionType!
+}
+
+union RefreshTokenModelDataUnionType = RefreshTokenModel | RefreshTokenModelRecordDeleteResult
+
+type RefreshTokenModel {
   _id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -42,19 +53,21 @@ type LoginPayload {
   iv: String!
   userId: String!
   refreshExpiresIn: DateTime!
-  user: UserModel
   accessToken: String!
+  user: UserModel
+}
+
+type RefreshTokenModelRecordDeleteResult {
+  acknowledged: Boolean!
+  deletedCount: Float!
+}
+
+type LoginPayload {
+  data: RefreshTokenModelDataUnionType!
 }
 
 type RegisterPayload {
-  _id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  name: String!
-  email: String
-  phone: String
-  username: String!
-  role: Role!
+  data: UserModelDataUnionType!
 }
 
 input UserInput {
@@ -70,10 +83,10 @@ type Query {
   findOneUserModel(where: UserModelFilter, sort: UserModelSort): UserModel
   findManyUserModel(where: UserModelFilter, sort: UserModelSort, skip: Int = 0, limit: Int): [UserModel!]!
   countUserModel(where: UserModelFilter): Int
-  createUserModel(record: UserInput!): UserModelBasePayload!
   updateUserModelById(_id: String!, record: UserModelUpdateArg!): UserModelBasePayload!
   removeUserModelById(_id: String!): UserModelBasePayload!
   hello: String!
+  getProfile: UserPayload!
 }
 
 input UserModelFilter {
@@ -136,6 +149,18 @@ input UserModelUpdateArg {
 }
 
 type Mutation {
-  login: LoginPayload!
-  register(password: String!): RegisterPayload!
+  updateProfile(name: String!, email: String!, phone: String!): UserPayload!
+  changePassword(oldPassword: String!, newPassword: String!): UserPayload!
+  login(username: String!, password: String!): LoginPayload!
+  register(data: RegisterInput!): RegisterPayload!
+  refresh(accessToken: String!, refreshToken: String!): RefreshTokenPayload!
+  revoke: RefreshTokenPayload!
+}
+
+input RegisterInput {
+  username: String!
+  name: String!
+  email: String
+  phone: String
+  password: String!
 }

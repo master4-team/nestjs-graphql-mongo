@@ -2,10 +2,8 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from '../models/user/user.module';
-import { LocalStrategy } from './strategies/localStrategy';
 import { JwtStrategy } from './strategies/jwtStrategy';
 import { EncryptionAndHashModule } from '../encryptionAndHash/encryptionAndHash.module';
-import { AuthController } from './auth.controller';
 import { TokenJwtModule } from '../jwt/token.jwt.module';
 import { JwtAuthGuard } from './guards/jwt';
 import { LocalAuthGuard } from './guards/local';
@@ -21,10 +19,9 @@ import { AuthResolver } from './auth.resolver';
     TokenJwtModule,
     EncryptionAndHashModule,
   ],
-  controllers: [AuthController],
   providers: [
+    AuthResolver,
     AuthService,
-    LocalStrategy,
     JwtStrategy,
     JwtAuthGuard,
     LocalAuthGuard,
