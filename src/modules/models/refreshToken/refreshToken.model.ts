@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BaseModel, BaseSchema, getSchemaOptions } from '../../base/base.model';
 import { ObjectId } from 'mongodb';
 import { UserModel } from '../user/user.model';

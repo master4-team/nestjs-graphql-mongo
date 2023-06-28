@@ -18,11 +18,11 @@ export class CrudService extends BaseService<CrudDocument, Crud> {
   async findByUserId(
     userId: string,
     filter: ParsedFilterQuery<Crud>,
-  ): Promise<CrudPayload[]> {
+  ): Promise<CrudPayload> {
     const _filter = filter.filter || {};
     _filter.userId = userId;
     filter.filter = _filter;
-
-    return await this.find(filter);
+    const cruds = await this.find(filter);
+    return { data: cruds };
   }
 }

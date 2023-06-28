@@ -1,5 +1,5 @@
-import { DeleteResult } from 'mongodb';
-import { Crud } from './crud.model';
+import { ObjectType } from '@nestjs/graphql';
+import { BaseCrudPayload } from './crud.base';
 
-export type CrudPayload = Crud;
-export type CrudDeletePayload = DeleteResult;
+@ObjectType()
+export class CrudPayload extends BaseCrudPayload {}

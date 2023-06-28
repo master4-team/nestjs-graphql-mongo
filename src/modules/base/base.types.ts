@@ -65,7 +65,7 @@ export interface IFindManyFilterArgs extends IFindOneFilterArgs {
 }
 
 export interface IBasePayload<TModel> {
-  data: TModel | DeleteResult;
+  data: TModel;
 }
 
 export interface IUpdateArgs {
@@ -74,9 +74,15 @@ export interface IUpdateArgs {
 }
 
 export interface IBaseResolver<TModel> {
-  findById?(_id: string): Promise<TModel>;
-  findOne?(args: IFindOneFilterArgs, info: ResolveTree): Promise<TModel>;
-  findMany?(args: IFindManyFilterArgs, info: ResolveTree): Promise<TModel[]>;
+  findById?(_id: string): Promise<IBasePayload<TModel>>;
+  findOne?(
+    args: IFindOneFilterArgs,
+    info: ResolveTree,
+  ): Promise<IBasePayload<TModel>>;
+  findMany?(
+    args: IFindManyFilterArgs,
+    info: ResolveTree,
+  ): Promise<IBasePayload<TModel>>;
   count?(args: ICountArgs): Promise<number>;
   create?(record: TModel): Promise<IBasePayload<TModel>>;
   updateById?(args: IUpdateArgs): Promise<IBasePayload<TModel>>;

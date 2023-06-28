@@ -306,6 +306,9 @@ export function createBaseResolver<TModel extends BaseModel>(
       if (value?.hasOwnProperty('acknowledged')) {
         return RecordDeleteResult;
       }
+      if (value?.length) {
+        return [ModelCls];
+      }
       return ModelCls;
     },
   });
@@ -313,7 +316,7 @@ export function createBaseResolver<TModel extends BaseModel>(
   @ObjectType(`${modelName}BasePayload`)
   class BasePayload implements IBasePayload<TModel> {
     @Field(() => PayloadDataUnionType)
-    public data: TModel | DeleteResult;
+    public data: TModel | DeleteResult | TModel[];
   }
 
   @Resolver({ isAbstract: true })
@@ -323,13 +326,14 @@ export function createBaseResolver<TModel extends BaseModel>(
     ) {}
 
     @Roles(...(read.roles || []))
-    @Query(() => ModelCls, {
+    @Query(() => BasePayload, {
       name: `find${modelName}ById`,
       nullable: true,
       active: read.active,
     })
-    public async findById(@Args('_id') _id: string): Promise<TModel> {
-      return this.service.findById(_id);
+    public async findById(@Args('_id') _id: string): Promise<BasePayload> {
+      const data = await this.service.findById(_id);
+      return { data };
     }
 
     @SkipJwtGuard()
