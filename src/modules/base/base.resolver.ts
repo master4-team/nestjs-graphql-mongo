@@ -9,6 +9,7 @@ import {
   Int,
   ObjectType,
   Resolver,
+  Scalar,
   createUnionType,
   registerEnumType,
 } from '@nestjs/graphql';
@@ -22,6 +23,7 @@ import {
   ICountArgs,
   IFindManyFilterArgs,
   IFindOneFilterArgs,
+  IPrimitiveValue,
   IUpdateArgs,
   IWhereFilterArgs,
   PropertyMetadata,
@@ -299,9 +301,15 @@ export function createBaseResolver<TModel extends BaseModel>(
     deletedCount: number;
   }
 
+  @ObjectType()
+  class PrimitiveValue implements IPrimitiveValue {
+    @Field(() => Scalar)
+    value: string | number | boolean | null | undefined;
+  }
+
   const PayloadDataUnionType = createUnionType({
     name: `${modelName}DataUnionType`,
-    types: () => [ModelCls, RecordDeleteResult] as const,
+    types: () => [ModelCls, RecordDeleteResult, PrimitiveValue] as const,
     resolveType: (value) => {
       if (value?.hasOwnProperty('acknowledged')) {
         return RecordDeleteResult;
@@ -309,14 +317,18 @@ export function createBaseResolver<TModel extends BaseModel>(
       if (value?.length) {
         return [ModelCls];
       }
-      return ModelCls;
+      if (value instanceof ModelCls) {
+        return ModelCls;
+      }
+
+      return PrimitiveValue;
     },
   });
 
   @ObjectType(`${modelName}BasePayload`)
   class BasePayload implements IBasePayload<TModel> {
     @Field(() => PayloadDataUnionType)
-    public data: TModel | DeleteResult | TModel[];
+    public data: TModel | DeleteResult | TModel[] | IPrimitiveValue;
   }
 
   @Resolver({ isAbstract: true })
@@ -338,7 +350,7 @@ export function createBaseResolver<TModel extends BaseModel>(
 
     @SkipJwtGuard()
     @Roles(...(read.roles || []))
-    @Query(() => ModelCls, {
+    @Query(() => BasePayload, {
       name: `findOne${modelName}`,
       nullable: true,
       active: read.active,
@@ -346,49 +358,57 @@ export function createBaseResolver<TModel extends BaseModel>(
     public async findOne(
       @Args() args: FindOneFilterArgs,
       @FieldInfo() info: ResolveTree,
-    ): Promise<TModel> {
+    ): Promise<BasePayload> {
       const pick = processQueryFields(info.fieldsByTypeName);
 
       const { where: whereFilter, sort: sortFilter } = args;
       const where = parseFilter(pickBy(whereFilter, (val) => !!val));
       const sort = parseSortFilter(pickBy(sortFilter, (val) => !!val));
 
-      return this.service.findOne({ where, sort, pick });
+      const data = await this.service.findOne({ where, sort, pick });
+      return { data };
     }
 
     @Roles(...(read.roles || []))
-    @Query(() => [ModelCls], {
+    @Query(() => BasePayload, {
       name: `findMany${modelName}`,
       active: read.active,
     })
     public async findMany(
       @Args() args: FindManyFilterArgs,
       @FieldInfo() info: ResolveTree,
-    ): Promise<TModel[]> {
+    ): Promise<BasePayload> {
       const pick = processQueryFields(info.fieldsByTypeName);
 
       const { skip, limit, sort: sortFilter, where: whereFilter } = args;
       const where = parseFilter(pickBy(whereFilter, (val) => !!val));
       const sort = parseSortFilter(pickBy(sortFilter, (val) => !!val));
 
-      return this.service.find({
+      const data = await this.service.find({
         skip,
         limit,
         where,
         sort,
         pick,
       });
+
+      return { data };
     }
 
     @Roles(...(read.roles || []))
-    @Query(() => Int, {
+    @Query(() => BasePayload, {
       name: `count${modelName}`,
       nullable: true,
       active: read.active,
     })
-    public async count(@Args() { where: filter }: CountArgs): Promise<number> {
+    public async count(
+      @Args() { where: filter }: CountArgs,
+    ): Promise<BasePayload> {
       const where = parseFilter(pickBy(filter, (val) => !!val));
-      return this.service.count({ where });
+
+      const value = await this.service.count({ where });
+
+      return { data: { value } };
     }
 
     @Roles(...(create.roles || []))

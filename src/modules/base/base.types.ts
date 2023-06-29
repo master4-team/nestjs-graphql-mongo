@@ -18,6 +18,10 @@ export type PropertyMetadata = Omit<GraphQLPropertyMetadata, 'options'> & {
   };
 };
 
+export interface IPrimitiveValue {
+  value: string | number | boolean | null | undefined | any;
+}
+
 type ActionOptions = {
   roles?: Role[];
   active?: boolean;
@@ -65,7 +69,7 @@ export interface IFindManyFilterArgs extends IFindOneFilterArgs {
 }
 
 export interface IBasePayload<TModel> {
-  data: TModel;
+  data: TModel | DeleteResult | TModel[] | IPrimitiveValue;
 }
 
 export interface IUpdateArgs {
@@ -83,7 +87,7 @@ export interface IBaseResolver<TModel> {
     args: IFindManyFilterArgs,
     info: ResolveTree,
   ): Promise<IBasePayload<TModel>>;
-  count?(args: ICountArgs): Promise<number>;
+  count?(args: ICountArgs): Promise<IBasePayload<TModel>>;
   create?(record: TModel): Promise<IBasePayload<TModel>>;
   updateById?(args: IUpdateArgs): Promise<IBasePayload<TModel>>;
   removeById?(_id: string): Promise<IBasePayload<TModel>>;

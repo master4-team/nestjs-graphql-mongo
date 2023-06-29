@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BaseService } from '../../base/base.service';
 import { Crud, CrudDocument, CrudModel } from './crud.model';
-import { ParsedFilterQuery } from '../../filter/filter.types';
 import { CrudPayload } from './crud.types';
+import { Filter } from '../../base/base.types';
 
 @Injectable()
 export class CrudService extends BaseService<CrudDocument, Crud> {
@@ -15,14 +15,11 @@ export class CrudService extends BaseService<CrudDocument, Crud> {
     super(crudModel);
   }
 
-  async findByUserId(
-    userId: string,
-    filter: ParsedFilterQuery<Crud>,
-  ): Promise<CrudPayload> {
-    const _filter = filter.filter || {};
-    _filter.userId = userId;
-    filter.filter = _filter;
-    const cruds = await this.find(filter);
+  async findByUserId(userId: string, filter: Filter): Promise<CrudPayload> {
+    const cruds = await this.find({
+      ...filter,
+      where: { ...(filter.where || {}), userId },
+    });
     return { data: cruds };
   }
 }
